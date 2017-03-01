@@ -98,8 +98,8 @@ public class PluginManager {
         }
 //
 //        // put extra data
-//        dIntent.putExtra(DLConstants.EXTRA_CLASS, className);
-//        dIntent.putExtra(DLConstants.EXTRA_PACKAGE, packageName);
+        dIntent.putExtra(LibConstants.EXTRA_CLASS, className);
+        dIntent.putExtra(LibConstants.EXTRA_PACKAGE, packageName);
         dIntent.setClass(mContext, activityClass);
         performStartActivityForResult(context, dIntent, requestCode);
 
@@ -124,6 +124,10 @@ public class PluginManager {
         }
 
         return clazz;
+    }
+
+    public PluginPackage getPackage(String packageName) {
+        return mPackagesHolder.get(packageName);
     }
 
     private String getPluginActivityFullPath(DIntent dIntent, PluginPackage pluginPackage) {

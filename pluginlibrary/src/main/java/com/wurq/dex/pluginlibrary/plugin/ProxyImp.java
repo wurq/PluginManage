@@ -100,7 +100,7 @@ public class ProxyImp {
         Log.d(TAG, "mClass=" + mClass + " mPackageName=" + mPackageName);
 
         mPluginManager = PluginManager.getInstance(mProxyActivity);
-//        mPluginPackage = mPluginManager.getPackage(mPackageName);
+        mPluginPackage = mPluginManager.getPackage(mPackageName);
         mAssetManager = mPluginPackage.assetManager;
         mResources = mPluginPackage.resources;
 
