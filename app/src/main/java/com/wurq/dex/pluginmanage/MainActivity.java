@@ -1,9 +1,6 @@
 package com.wurq.dex.pluginmanage;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,60 +37,54 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-//        mPluginAdapter = new PluginAdapter();
-//        mListView = (ListView) findViewById(R.id.plugin_list);
+        mPluginAdapter = new PluginAdapter();
+        mListView = (ListView) findViewById(R.id.plugin_list);
 //        mNoPluginTextView = (TextView)findViewById(R.id.noplugin);
 
-        Button btn= (Button) findViewById(R.id.select_plugin);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*");//设置类型，我这里是任意类型，任意后缀的可以这样写。
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(intent,1);
-            }
-        });
+//        Button btn= (Button) findViewById(R.id.select_plugin);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(Intent.ACTION_VIEW);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                intent.setType("*/*");//设置类型，我这里是任意类型，任意后缀的可以这样写。
+////                intent.addCategory(Intent.CATEGORY_OPENABLE);
+//                startActivityForResult(intent,1);
+//            }
+//        });
 
-//        Log.d("codecraeer", "getFilesDir = " + getFilesDir());
-//        Log.i("codecraeer", "getExternalFilesDir = " + getExternalFilesDir("exter_test").getAbsolutePath());
-//        Log.i("codecraeer", "getDownloadCacheDirectory = " + Environment.getDownloadCacheDirectory().getAbsolutePath());
-//        Log.i("codecraeer", "getDataDirectory = " + Environment.getDataDirectory().getAbsolutePath());
-//        Log.i("codecraeer", "getExternalStorageDirectory = " + Environment.getExternalStorageDirectory().getAbsolutePath());
-//        Log.i("codecraeer", "getExternalStoragePublicDirectory = " + Environment.getExternalStoragePublicDirectory("pub_test"));
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            Uri uri = data.getData();
-            PluginItem item = new PluginItem();
-//            File plugin = new File(uri);
-            item.pluginPath = uri.toString();//plugin.getAbsolutePath();
-            item.packageInfo = Util.getPackageInfo(this, item.pluginPath);
-            if (item.packageInfo.activities != null && item.packageInfo.activities.length > 0)
-            {
-                item.launcherActivityName = item.packageInfo.activities[0].name;
-            }
-
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (resultCode == Activity.RESULT_OK) {
+//            Uri uri = data.getData();
+//            PluginItem item = new PluginItem();
+////            File plugin = new File(uri);
+//            item.pluginPath = uri.toString();//plugin.getAbsolutePath();
+//            item.packageInfo = Util.getPackageInfo(this, item.pluginPath);
+//            if (item.packageInfo.activities != null && item.packageInfo.activities.length > 0)
+//            {
+//                item.launcherActivityName = item.packageInfo.activities[0].name;
+//            }
+//
+//        }
+//    }
 
     private void initData() {
 
-        boolean b = Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
-//        String pluginFolder = Environment.getExternalStorageDirectory() + "/host";
+//        String stat = Environment.getExternalStorageState();
+//        boolean b = Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+        String pluginFolder = Environment.getExternalStorageDirectory() + "/host";
 //
-//        PackageInfo packageInfo = Util.getPackageInfo(this,
-//                Environment.getExternalStorageDirectory() + "/host/plugina-debug-unaligned.apk");
-        String pluginFolder = "file:///storage/emulated/0";//Environment.getExternalStorageDirectory().getAbsolutePath() ;
-        File file = new File(Environment.getExternalStorageDirectory().getPath());
-        if(file.isDirectory()) {
-            int i=0;
-        }
+        File file = new File(pluginFolder);
+//        String statf = Environment.getExternalStorageState();
+//        if(file.isDirectory()) {
+//            int i=0;
+//        }
         File[] plugins = file.listFiles();
         if (plugins == null || plugins.length == 0) {
-            mNoPluginTextView.setVisibility(View.VISIBLE);
+//            mNoPluginTextView.setVisibility(View.VISIBLE);
             return;
         }
 //        file:///storage/emulated/0
@@ -106,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 item.launcherActivityName = item.packageInfo.activities[0].name;
             }
-
+            PluginManager.getInstance(this).loadApk(item.pluginPath);
             mPluginItems.add(item);
         }
 
@@ -183,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
         public String launcherActivityName;
 
         public PluginItem() {
+//            LruCache<>
         }
     }
 

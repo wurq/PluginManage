@@ -10,6 +10,9 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.text.TextUtils;
 
+import com.wurq.dex.pluginlibrary.plugin.BasePluginActivity;
+import com.wurq.dex.pluginlibrary.plugin.ProxyActivity;
+
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -64,7 +67,8 @@ public class PluginManager {
      */
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public int startPluginActivityForResult(Context context, DIntent dIntent, int requestCode) {
-//        if (mFrom == DLConstants.FROM_INTERNAL) {
+//        if (mFrom == DLConstants.FROM_INTERNAL)
+//        {
 //            dIntent.setClassName(context, dIntent.getPluginClass());
 //            performStartActivityForResult(context, dIntent, requestCode);
 //            return PluginManager.START_RESULT_SUCCESS;
@@ -86,18 +90,19 @@ public class PluginManager {
             return START_RESULT_NO_CLASS;
         }
 
-//        // get the proxy activity class, the proxy activity will launch the
-//        // plugin activity.
-//        Class<? extends Activity> activityClass = getProxyActivityClass(clazz);
-//        if (activityClass == null) {
-//            return START_RESULT_TYPE_ERROR;
-//        }
+        // get the proxy activity class, the proxy activity will launch the
+        // plugin activity.
+        Class<? extends Activity> activityClass = getProxyActivityClass(clazz);
+        if (activityClass == null) {
+            return START_RESULT_TYPE_ERROR;
+        }
 //
 //        // put extra data
 //        dIntent.putExtra(DLConstants.EXTRA_CLASS, className);
 //        dIntent.putExtra(DLConstants.EXTRA_PACKAGE, packageName);
-//        dIntent.setClass(mContext, activityClass);
-//        performStartActivityForResult(context, dIntent, requestCode);
+        dIntent.setClass(mContext, activityClass);
+        performStartActivityForResult(context, dIntent, requestCode);
+
         return START_RESULT_SUCCESS;
     }
 
@@ -121,11 +126,11 @@ public class PluginManager {
         return clazz;
     }
 
-    private String getPluginActivityFullPath(DIntent dlIntent, PluginPackage pluginPackage) {
-        String className = dlIntent.getPluginClass();
+    private String getPluginActivityFullPath(DIntent dIntent, PluginPackage pluginPackage) {
+        String className = dIntent.getPluginClass();
         className = (className == null ? pluginPackage.defaultActivity : className);
         if (className.startsWith(".")) {
-            className = dlIntent.getPluginPackage() + className;
+            className = dIntent.getPluginPackage() + className;
         }
         return className;
     }
@@ -158,7 +163,7 @@ public class PluginManager {
         Resources resources = createResources(assetManager);
         // create pluginPackage
         PluginPackage pluginPackage = new PluginPackage(dexClassLoader, resources, packageInfo);
-//        mPackagesHolder.put(packageInfo.packageName, pluginPackage);
+        mPackagesHolder.put(packageInfo.packageName, pluginPackage);
         return pluginPackage;
     }
 
@@ -190,4 +195,27 @@ public class PluginManager {
         Resources resources = new Resources(assetManager, superRes.getDisplayMetrics(), superRes.getConfiguration());
         return resources;
     }
+
+    /**
+     * get the proxy activity class, the proxy activity will delegate the plugin
+     * activity
+     *
+     * @param clazz
+     *            target activity's class
+     * @return
+     */
+    private Class<? extends Activity> getProxyActivityClass(Class<?> clazz) {
+        Class<? extends Activity> activityClass = null;
+        if (BasePluginActivity.class.isAssignableFrom(clazz)) {
+            activityClass = ProxyActivity.class;
+        } else
+        {
+//            if (BasePluginFragmentActivity.class.isAssignableFrom(clazz)) {
+//                activityClass = DLProxyFragmentActivity.class;
+//            }
+        }
+
+        return activityClass;
+    }
+
 }

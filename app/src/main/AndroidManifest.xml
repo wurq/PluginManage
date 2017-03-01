@@ -15,6 +15,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity android:name="com.wurq.dex.pluginlibrary.plugin.BasePluginActivity"/>
+        <activity android:name="com.wurq.dex.pluginlibrary.plugin.ProxyActivity"/>
     </application>
 
 </manifest>
